@@ -14,7 +14,7 @@ void setup() {
   
   // https://reyax.com/wp-content/uploads/2020/01/Lora-AT-Command-RYLR40x_RYLR89x_EN.pdf
   // Page 4 for AT+PARAMETER
-  Serial.print("AT+PARAMETER=12,4,1,7\r\n");    //For More than 3Kms
+  Serial.print("AT+PARAMETER=7,9,1,7\r\n");
   delay(100);   //wait for module to respond
   
   Serial.print("AT+BAND=896000000\r\n");    //Bandwidth set to 868.5MHz
