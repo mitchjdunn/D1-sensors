@@ -1,36 +1,50 @@
+#include <SoftwareSerial.h>
 /*This Code is for the TRANSMITTER*/
+
+String received;
+int count = 0;
+SoftwareSerial loraSerial(12, 14); // TX RX
 
 void setup() {
   // put your setup code here, to run once:
   pinMode(BUILTIN_LED, OUTPUT);
   digitalWrite(BUILTIN_LED, LOW);
 
-  Serial.begin(115200);   //default baudrate of module is 115200
-  delay(100);             //wait for Lora device to be ready
+  Serial.begin(115200);
+  Serial.println("\r\nHello World!");
+  loraSerial.begin(9600);
 
-  Serial.print("AT\r\n");
+  delay(2000);
+
+  loraSerial.print("AT+ADDRESS=169\r\n");
   delay(100);
+  Serial.println(loraSerial.readString());
 
-  Serial.print("AT+PARAMETER=7,9,1,7\r\n");
-  delay(100);   //wait for module to respond
+  loraSerial.print("AT+NETWORKID=6\r\n");
+  delay(100);
+  Serial.println(loraSerial.readString());
 
-  Serial.print("AT+BAND=896000000\r\n");    //Bandwidth set to 868.5MHz
-  delay(100);   //wait for module to respond
+  loraSerial.print("AT+BAND=868500000\r\n");
+  delay(100);
+  Serial.println(loraSerial.readString());
 
-  Serial.print("AT+ADDRESS=169\r\n");   //needs to be unique
-  delay(100);   //wait for module to respond
-
-  Serial.print("AT+NETWORKID=6\r\n");   //needs to be same for receiver and transmitter
-  delay(100);   //wait for module to respond
+  loraSerial.print("AT+PARAMETER=10,7,1,7\r\n");
+  delay(100);
+  Serial.println(loraSerial.readString());
 
   digitalWrite(BUILTIN_LED, HIGH);
 }
 
 void loop() {
-  Serial.print("AT+SEND=170,1,1\r\n");    //send 1 to address 116("1" is of 1 byte)
+  count = ++count % 10; 
+
+  loraSerial.printf("AT+SEND=170,103,This is a very long message that I will put one number at the end of for the sake of making it unique %d\r\n", count);
+
+  while (!loraSerial.available());
+  Serial.println(loraSerial.readString());
+  Serial.printf("Sent! %d\n", count);
   digitalWrite(BUILTIN_LED, LOW);
   delay(100);
   digitalWrite(BUILTIN_LED, HIGH);
 
-  delay(1900);
 }
