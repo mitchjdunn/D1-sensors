@@ -1,0 +1,2 @@
+# PIN MAPPINGS
+D5 and D6 are either 12 or 14
