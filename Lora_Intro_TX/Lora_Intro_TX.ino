@@ -12,6 +12,7 @@ void setup() {
 
   Serial.begin(115200);
   Serial.println("\r\nHello World!");
+  // Max baud rate for the GPIO pins 
   loraSerial.begin(9600);
 
   delay(2000);
@@ -38,13 +39,20 @@ void setup() {
 void loop() {
   count = ++count % 10; 
 
+  Serial.printf("Sent! %d\n", count);
+  // Send command format: "AT+SEND=" + receiver addr + "," + msg length + "," + msg data 
   loraSerial.printf("AT+SEND=170,103,This is a very long message that I will put one number at the end of for the sake of making it unique %d\r\n", count);
 
-  while (!loraSerial.available());
-  Serial.println(loraSerial.readString());
-  Serial.printf("Sent! %d\n", count);
+  // Blink after we send packet
   digitalWrite(BUILTIN_LED, LOW);
   delay(100);
   digitalWrite(BUILTIN_LED, HIGH);
+  
+  // This'll wait for the +OK message back from the lora module
+  // I thnk this means that the message was ack'd on the RX side
+  while (!loraSerial.available());
+  // Prints "+OK" or an error
+  Serial.println(loraSerial.readString());
+
 
 }
